@@ -20,18 +20,13 @@ RUN npm run build
 # =============================================================
 # ETAPA 2: runtime
 # =============================================================
-FROM nginx:alpine AS runtime
+FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
 
 LABEL maintainer="casino-devops"
 
-RUN rm -rf /usr/share/nginx/html/* \
- && rm -f /etc/nginx/conf.d/default.conf
+COPY --from=builder --chown=nginx:nginx /app/dist/casino-frontend/browser/. /usr/share/nginx/html/
+COPY --chown=nginx:nginx nginx.conf /etc/nginx/templates/default.conf.template
 
-COPY default.conf.template /etc/nginx/templates/default.conf.template
+USER nginx
 
-COPY --from=builder /app/dist/casino-frontend/browser/. /usr/share/nginx/html/
-
-EXPOSE 80
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:80/ > /dev/null || exit 1
+EXPOSE 8080
