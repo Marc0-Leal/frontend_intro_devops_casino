@@ -1,25 +1,32 @@
-name: Build, Push y Deploy - casino-frontend
-
+Pega esto:
+yamlname: Build, Push y Deploy - casino-frontend
 on:
   push:
     branches:
       - deploy
   workflow_dispatch:
-
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: casino-frontend
   EKS_CLUSTER: vidalcasino-cluster
   DEPLOYMENT_NAME: casino-frontend
   CONTAINER_NAME: casino-frontend
-
 jobs:
   build-push-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias y ejecutar pruebas
+        run: |
+          npm ci
+          npx ng test --watch=false --browsers=ChromeHeadless
 
       - name: Configurar credenciales AWS
         uses: aws-actions/configure-aws-credentials@v4
