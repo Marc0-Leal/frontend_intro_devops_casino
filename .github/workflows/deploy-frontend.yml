@@ -6,6 +6,17 @@ on:
     branches: [ "deploy" ]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias y correr pruebas
+        run: |
+          npm ci
+          npm test -- --watch=false --browsers=ChromeHeadless
+
   build-push-deploy:
     runs-on: ubuntu-latest
 
