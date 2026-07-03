@@ -11,7 +11,7 @@ env:
   DEPLOYMENT_NAME: casino-frontend
   CONTAINER_NAME: casino-frontend
 jobs:
-  build-push-deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout código
@@ -24,6 +24,13 @@ jobs:
         run: |
           npm ci
           npx ng test --watch=false --browsers=ChromeHeadless
+
+  build-push-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
       - name: Configurar credenciales AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
