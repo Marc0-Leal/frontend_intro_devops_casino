@@ -1,5 +1,5 @@
 
-yamlname: Build, Push y Deploy - casino-frontend
+name: Build, Push y Deploy - casino-frontend
 on:
   push:
     branches:
